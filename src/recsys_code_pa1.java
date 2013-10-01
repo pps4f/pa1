@@ -150,6 +150,18 @@ class MovieAnalyze {
 
 
         // Calculate Advanced
+        advancedScore = new MovieSort[probXandY.size()];
+        i = 0;
+        for (Map.Entry myentry : probXandY.entrySet()) {
+            String movi = (String) myentry.getKey();
+
+            double numerator = (Double) myentry.getValue()/probX;
+            double denominator = probNotXandY.get(movi) / probNotX;
+            advancedScore[i] = new MovieSort(movi, numerator/denominator);
+            i++;
+        }
+        Arrays.sort(advancedScore);
+
     }
 
     // Return top 5 movie and probability in String
@@ -169,6 +181,14 @@ class MovieAnalyze {
     // Return top 5 movie and probability in String
     public String getTop5Advanced() {
         String a = "";
+
+        System.out.printf("%s", movieX);
+        for (int j=0; j<5; j++) {
+            //System.out.println("Movie " + advancedScore[j].movieID + " = " + advancedScore[j].score);
+            System.out.printf(",%s,%.2f", advancedScore[j].movieID, advancedScore[j].score);
+        }
+        System.out.printf("\n");
+
         return a;
     }
 
@@ -347,18 +367,32 @@ class NonPersRecommender {
                 // X = 640, 275, 607
                 // - P(X and Y)
                 // - P(X) = count of X / count of all distinct movies
-                int movieX = 640;
-                int countX = getCountX(ratingsmatrix, "640");
-                int countAll = usermap.size();
-                double probX = (double)countX / (double)countAll;
-                //System.out.println("countX = " + countX + "; countAll = " + countAll + "; probX = " + probX);
-                //System.out.println(countX);
 
                 MovieAnalyze movie640 = new MovieAnalyze(ratingsmatrix, inputList, moviemap, usermap, "640");
-                String stringSimple640 = movie640.getTop5Simple();
+                MovieAnalyze movie275 = new MovieAnalyze(ratingsmatrix, inputList, moviemap, usermap, "275");
+                MovieAnalyze movie607 = new MovieAnalyze(ratingsmatrix, inputList, moviemap, usermap, "607");
 
+                String stringSimple640 = movie640.getTop5Simple();
+                String stringSimple275 = movie275.getTop5Simple();
+                String stringSimple607 = movie607.getTop5Simple();
+
+                String stringAdvanced640 = movie640.getTop5Advanced();
+                String stringAdvanced275 = movie275.getTop5Advanced();
+                String stringAdvanced607 = movie607.getTop5Advanced();
+
+                /*
                 MovieAnalyze movie11 = new MovieAnalyze(ratingsmatrix, inputList, moviemap, usermap, "11");
+                MovieAnalyze movie121 = new MovieAnalyze(ratingsmatrix, inputList, moviemap, usermap, "121");
+                MovieAnalyze movie8587 = new MovieAnalyze(ratingsmatrix, inputList, moviemap, usermap, "8587");
+
                 String stringSimple11 = movie11.getTop5Simple();
+                String stringSimple121 = movie121.getTop5Simple();
+                String stringSimple8587 = movie8587.getTop5Simple();
+
+                String stringAdvanced11 = movie11.getTop5Advanced();
+                String stringAdvanced121 = movie121.getTop5Advanced();
+                String stringAdvanced8587 = movie8587.getTop5Advanced();
+                */
 
                 // Enumerate ratings matrix to calculate advanced product association
                 // - P(X and Y)
@@ -379,8 +413,6 @@ class NonPersRecommender {
 
         // Movies array contains the movie IDs of the top 5 movies.
         int movies[] = new int[5];
-
-        System.out.println("Hello world");
 
         // Write the top 5 movies, one per line, to a text file.
         try {
